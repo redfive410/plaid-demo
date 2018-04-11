@@ -13,14 +13,15 @@ import plaid
 
 def lambda_handler(event, context):
     ssm = boto3.client('ssm', 'us-west-2')
-    response = ssm.get_parameter(Name='/plaid/client_id',WithDecryption=True)
-    client_id = response['Parameter']['Value']
+    response = ssm.get_parameters_by_path(Path='/plaid',WithDecryption=True)
 
-    response = ssm.get_parameter(Name='/plaid/secret',WithDecryption=True)
-    secret = response['Parameter']['Value']
-
-    response = ssm.get_parameter(Name='/plaid/public_key',WithDecryption=True)
-    public_key = response['Parameter']['Value']
+    for item in response['Parameters']:
+        if item['Name'] == '/plaid/client_id':
+            client_id = item['Value']
+        elif item['Name'] == '/plaid/secret':
+            secret = item['Value']
+        elif item['Name'] == "/plaid/public_key":
+            public_key = item['Value']
 
     client = plaid.Client(client_id=client_id, secret=secret,
                       public_key=public_key, environment="development")

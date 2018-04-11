@@ -24,6 +24,7 @@ EOF
 data "aws_iam_policy_document" "lambda-plaid-role-policy-document" {
   statement {
     actions = [
+      "ssm:GetParametersByPath",
       "ssm:GetParameter",
       "ssm:PutParameter"
     ]
